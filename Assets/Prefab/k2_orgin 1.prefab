@@ -720,6 +720,11 @@ MonoBehaviour:
   emptyClickSound: {fileID: 8300000, guid: 8231d62cce9ebfd41b45af8554683701, type: 3}
   magInsertSound: {fileID: 8300000, guid: 2a42c8fcc17c0f24fb14db4162a795ac, type: 3}
   magazineSocket: {fileID: 6074596401498921162}
+  hapticAmplitude: 0.8
+  hapticDuration: 0.1
+  recoilForce: 10
+  recoilUpwardForce: 5
+  BoomPos: {fileID: 3692877479573069639}
 --- !u!82 &7991473188206966829
 AudioSource:
   m_ObjectHideFlags: 0

@@ -32,6 +32,8 @@ public class Gun : MonoBehaviour
 
     private Rigidbody gunRigidbody;
 
+    public GameObject BoomPos;
+
     void Start()
     {
         XRGrabInteractable grabbable = GetComponent<XRGrabInteractable>();
@@ -57,6 +59,8 @@ public class Gun : MonoBehaviour
         if (isBoltLocked)
         {
             ReleaseBolt();
+            EffectManager.instance.PlayEffect("Boom", BoomPos.transform.position, Quaternion.identity);
+
             return;
         }
 
@@ -81,6 +85,7 @@ public class Gun : MonoBehaviour
                 }
 
                 audioSource.PlayOneShot(fireSound);
+                EffectManager.instance.PlayEffect("Boom", BoomPos.transform.position, Quaternion.identity);
 
                 if (arg.interactorObject is XRBaseControllerInteractor controllerInteractor)
                 {
