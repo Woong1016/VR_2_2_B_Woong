@@ -58,7 +58,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletHolePrefab: {fileID: 7011587349384910863, guid: af32bf7b929743e4c93e82695d3034b9,
     type: 3}
-  holeOffset: 0.5
+  holeOffset: 0.01
 --- !u!23 &3575451215878421398
 MeshRenderer:
   m_ObjectHideFlags: 0
