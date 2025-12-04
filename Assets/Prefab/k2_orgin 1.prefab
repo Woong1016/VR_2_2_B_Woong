@@ -161,7 +161,7 @@ Transform:
   m_GameObject: {fileID: 3692877479573069639}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 4.665, y: 1.16, z: 0.001}
+  m_LocalPosition: {x: 3.414, y: 1.579, z: 0.001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -708,22 +708,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98a19ece6c5f0034dbb4ae8145164762, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 7011587349384910863, guid: 8fd62d56162855d449f423a780b6cd6d,
+  maxDistance: 100
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  bulletHolePrefab: {fileID: 7011587349384910863, guid: af32bf7b929743e4c93e82695d3034b9,
     type: 3}
-  muzzlePoint: {fileID: 4816212253583871753}
-  bulletSpeed: 70
+  holeOffset: 0.01
   shellPrefab: {fileID: 892060407014596940, guid: a9e798c6739cbcd4da50a81b0fd66bf9,
     type: 3}
   ejectionPoint: {fileID: 5390807119440355099}
   ejectionForce: 2
+  muzzlePoint: {fileID: 4816212253583871753}
   fireSound: {fileID: 8300000, guid: 213e279f72fb44142ab4259ff0adeb83, type: 3}
   emptyClickSound: {fileID: 8300000, guid: 8231d62cce9ebfd41b45af8554683701, type: 3}
   magInsertSound: {fileID: 8300000, guid: 2a42c8fcc17c0f24fb14db4162a795ac, type: 3}
   magazineSocket: {fileID: 6074596401498921162}
   hapticAmplitude: 0.8
   hapticDuration: 0.1
-  recoilForce: 10
-  recoilUpwardForce: 5
   BoomPos: {fileID: 3692877479573069639}
 --- !u!82 &7991473188206966829
 AudioSource:

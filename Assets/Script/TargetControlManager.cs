@@ -55,7 +55,16 @@ public class TargetControlManager : MonoBehaviour
         StartCoroutine(MoveAllTargets());
     }
 
-    
+    public void ToggleTargets()
+    {
+        if (isMoving) return;
+        if (allTargets.Length == 0) return;
+
+        areTargetsClose = !areTargetsClose;
+        StartCoroutine(MoveAllTargets());
+    }
+
+
     private IEnumerator MoveAllTargets()
     {
         isMoving = true;
