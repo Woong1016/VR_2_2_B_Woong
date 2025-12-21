@@ -78,14 +78,20 @@ public class Gun : MonoBehaviour
                 // 총구 위치에서, 총구 앞방향으로 레이저를 발사
                 if (Physics.Raycast(muzzlePoint.position, muzzlePoint.forward, out hit, maxDistance, hitLayers))
                 {
-                    // A. 맞은 물체가 표적지인지 확인 (TargetScore 스크립트 찾기)
+                    // A. 기존 과녁 (TargetScore)
                     TargetScore target = hit.collider.GetComponent<TargetScore>();
                     if (target != null)
                     {
-                        // 표적지라면 점수 계산 함수 호출
                         target.OnHit(hit.point);
                     }
 
+                    // ==========================================
+                    // ★★★ [추가] 미니게임 표적 인식 코드 ★★★
+                    ReactionTarget reactionTarget = hit.collider.GetComponent<ReactionTarget>();
+                    if (reactionTarget != null)
+                    {
+                        reactionTarget.OnHit();
+                    }
                     // B. 총알 구멍 생성
                     if (bulletHolePrefab != null)
                     {
