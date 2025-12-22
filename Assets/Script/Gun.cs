@@ -5,12 +5,12 @@ using System.Collections;
 public class Gun : MonoBehaviour
 {
     [Header("레이캐스트 사격 설정")]
-    public float maxDistance = 100f; // 사격 가능한 최대 거리
-    public LayerMask hitLayers = -1; // 맞출 수 있는 레이어 (기본값: 모든 레이어)
+    public float maxDistance = 100f;
+    public LayerMask hitLayers = -1;
 
     [Header("총알 구멍 설정")]
-    public GameObject bulletHolePrefab; // 총알 구멍 프리팹
-    public float holeOffset = 0.01f;    // 구멍이 벽에 파묻히지 않게 띄울 거리
+    public GameObject bulletHolePrefab;
+    public float holeOffset = 0.01f;
 
     [Header("탄피 배출 관련")]
     public GameObject shellPrefab;
@@ -35,11 +35,10 @@ public class Gun : MonoBehaviour
     public float hapticAmplitude = 0.8f;
     public float hapticDuration = 0.1f;
 
-    // 내부 변수
     private Animator boltAnimator;
     private bool isBoltLocked = false;
 
-    public GameObject BoomPos; // 이펙트 위치
+    public GameObject BoomPos;
 
     void Start()
     {
@@ -57,65 +56,45 @@ public class Gun : MonoBehaviour
 
     public void Fire(ActivateEventArgs arg)
     {
-        // 1. 노리쇠가 잠겨있으면 전진만 시키고 발사 안 함
         if (isBoltLocked)
         {
             ReleaseBolt();
-            if (BoomPos != null) EffectManager.instance.PlayEffect("Boom", BoomPos.transform.position, Quaternion.identity);
+            if (BoomPos != null)
+            {
+                Quaternion fixRotation = muzzlePoint.rotation * Quaternion.Euler(0, -90, 0);
+                EffectManager.instance.PlayEffect("Boom", BoomPos.transform.position, fixRotation);
+            }
             return;
         }
 
-        // 2. 탄창과 총알 확인
         if (hasMagazine)
         {
             if (currentMagazine.ammoCount > 0)
             {
-                // ==========================================
-                // 레이캐스트 발사 로직
-                // ==========================================
                 RaycastHit hit;
 
-                // 총구 위치에서, 총구 앞방향으로 레이저를 발사
-                if (Physics.Raycast(muzzlePoint.position, muzzlePoint.forward, out hit, maxDistance, hitLayers))
+                if (Physics.Raycast(muzzlePoint.position, muzzlePoint.forward, out hit, maxDistance, hitLayers, QueryTriggerInteraction.Ignore))
                 {
-                    // A. 기존 과녁 (TargetScore)
                     TargetScore target = hit.collider.GetComponent<TargetScore>();
-                    if (target != null)
-                    {
-                        target.OnHit(hit.point);
-                    }
+                    if (target != null) target.OnHit(hit.point);
 
-                    // ==========================================
-                    // ★★★ [추가] 미니게임 표적 인식 코드 ★★★
                     ReactionTarget reactionTarget = hit.collider.GetComponent<ReactionTarget>();
-                    if (reactionTarget != null)
-                    {
-                        reactionTarget.OnHit();
-                    }
-                    // B. 총알 구멍 생성
+                    if (reactionTarget != null) reactionTarget.OnHit();
+
                     if (bulletHolePrefab != null)
                     {
                         Vector3 spawnPos = hit.point + (hit.normal * holeOffset);
                         Quaternion spawnRot = Quaternion.LookRotation(hit.normal) * Quaternion.Euler(90, 0, 0);
-
                         GameObject hole = Instantiate(bulletHolePrefab, spawnPos, spawnRot);
-                        hole.transform.SetParent(hit.collider.transform); // 맞은 물체를 부모로 설정
-
-                        Destroy(hole, 10f); // 10초 뒤 삭제
+                        hole.transform.SetParent(hit.collider.transform);
+                        Destroy(hole, 10f);
                     }
 
-                    // C. (선택) 맞은 물체가 물리효과(Rigidbody)가 있다면 밀어버리기
-                    if (hit.rigidbody != null)
-                    {
-                        hit.rigidbody.AddForce(-hit.normal * 50f);
-                    }
+                    if (hit.rigidbody != null) hit.rigidbody.AddForce(-hit.normal * 50f);
                 }
-                // ==========================================
 
-                // 3. 탄약 감소
                 currentMagazine.ammoCount--;
 
-                // 4. 탄피 배출
                 if (shellPrefab != null && ejectionPoint != null)
                 {
                     GameObject spawnedShell = Instantiate(shellPrefab, ejectionPoint.position, ejectionPoint.rotation);
@@ -124,31 +103,29 @@ public class Gun : MonoBehaviour
                     Destroy(spawnedShell, 3f);
                 }
 
-                // 5. 소리 및 이펙트
                 audioSource.PlayOneShot(fireSound);
-                if (BoomPos != null) EffectManager.instance.PlayEffect("Boom", BoomPos.transform.position, Quaternion.identity);
 
-                // 6. 햅틱 진동 (손맛은 남겨둠)
+
+                if (BoomPos != null)
+                {
+                    Quaternion fixRotation = muzzlePoint.rotation * Quaternion.Euler(0, -90, 0);
+                    EffectManager.instance.PlayEffect("Boom", BoomPos.transform.position, fixRotation);
+                }
+
                 if (arg.interactorObject is XRBaseControllerInteractor controllerInteractor)
                 {
                     controllerInteractor.xrController.SendHapticImpulse(hapticAmplitude, hapticDuration);
                 }
 
-                // 7. 반동 로직 (삭제됨)
-
-                // 8. 마지막 탄환 체크 (노리쇠 후퇴 고정)
-                if (currentMagazine.ammoCount <= 0)
-                {
-                    LockBolt();
-                }
+                if (currentMagazine.ammoCount <= 0) LockBolt();
             }
-            else // 총알 없음
+            else
             {
                 audioSource.PlayOneShot(emptyClickSound);
                 LockBolt();
             }
         }
-        else // 탄창 없음
+        else
         {
             audioSource.PlayOneShot(emptyClickSound);
         }
@@ -161,10 +138,7 @@ public class Gun : MonoBehaviour
         {
             hasMagazine = true;
             audioSource.PlayOneShot(magInsertSound);
-            if (currentMagazine.ammoCount > 0 && isBoltLocked)
-            {
-                ReleaseBolt();
-            }
+            if (currentMagazine.ammoCount > 0 && isBoltLocked) ReleaseBolt();
         }
     }
 

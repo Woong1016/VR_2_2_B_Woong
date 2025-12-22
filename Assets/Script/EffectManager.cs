@@ -140,6 +140,6 @@ public class EffectManager : MonoBehaviour
             _effectPools[effectName].poolQueue.Enqueue(instance);           // �ٽ� Ǯ�� ��ȯ
         }
     }
-
+  
     #endregion
 }
